@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Mastery: Factorizing Trinomials</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --school-blue: #1e3a8a;
+            --school-gold: #fbbf24;
+        }
+        body { background-color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .school-theme { border-top: 8px solid var(--school-blue); }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+
+    <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden school-theme">
+        <div class="p-8">
+            <h1 class="text-3xl font-bold text-blue-900 mb-2">Trinomial Factorization Prep</h1>
+            
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                <p class="text-gray-600">Year 9 Advanced Mathematics | Focus: Monic & Non-Monic</p>
+                <div class="bg-blue-50 text-blue-900 border border-blue-200 px-5 py-2 rounded-full font-bold shadow-sm flex gap-4">
+                    <span>Score: <span id="score-display">0</span></span>
+                    <span class="text-blue-300">|</span>
+                    <span class="text-amber-600">Streak: <span id="streak-display" class="text-amber-500">0</span> 🔥</span>
+                </div>
+            </div>
+
+            <div class="bg-blue-50 p-8 rounded-lg text-center mb-8 border border-blue-100 shadow-inner">
+                <div id="equation-display" class="text-4xl font-serif text-gray-800">
+                    </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Your Answer:</label>
+                    <input type="text" id="user-input" placeholder="e.g., (x+2)(x+3)" 
+                           class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 outline-none transition-all font-mono text-lg text-center">
+                </div>
+                <div class="flex items-end">
+                    <button id="submit-btn" onclick="checkAnswer()" class="w-full bg-blue-800 hover:bg-blue-900 text-white font-bold py-3 rounded-lg transition-colors shadow-lg">
+                        Submit Answer
+                    </button>
+                </div>
+            </div>
+
+            <div id="feedback" class="hidden p-4 rounded-lg mb-6 font-medium text-center text-lg"></div>
+
+            <div class="flex flex-wrap gap-4">
+                <button onclick="generateProblem()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-6 rounded-lg transition shadow-sm">
+                    New Problem
+                </button>
+                <button id="hint-btn" onclick="showHint()" class="bg-amber-100 hover:bg-amber-200 text-amber-800 font-semibold py-2 px-6 rounded-lg transition border border-amber-200 shadow-sm">
+                    Need a Hint?
+                </button>
+            </div>
+
+            <div id="hint-box" class="hidden mt-6 p-4 bg-amber-50 border-l-4 border-amber-400 text-gray-700 italic rounded-r-lg">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game State Variables
+        let currentProblem = {};
+        let score = 0;
+        let streak = 0;
+        let isProblemSolved = false;
+        
+        function generateProblem() {
+            // Reset UI for new problem
+            document.getElementById('feedback').classList.add('hidden');
+            document.getElementById('hint-box').classList.add('hidden');
+            document.getElementById('user-input').value = '';
+            document.getElementById('user-input').disabled = false;
+            document.getElementById('submit-btn').disabled = false;
+            document.getElementById('submit-btn').classList.remove('opacity-50', 'cursor-not-allowed');
+            
+            isProblemSolved = false;
+            const isMonic = Math.random() > 0.5;
+            let a, m, n, p, q;
+
+            if (isMonic) {
+                a = 1;
+                m = Math.floor(Math.random() * 21) - 10; 
+                n = Math.floor(Math.random() * 21) - 10;
+                while(m === 0) m = 2; 
+                while(n === 0) n = 3;
+                
+                currentProblem = {
+                    a: 1,
+                    b: m + n,
+                    c: m * n,
+                    answer1: `(x${m>=0?'+':''}${m})(x${n>=0?'+':''}${n})`,
+                    answer2: `(x${n>=0?'+':''}${n})(x${m>=0?'+':''}${m})`,
+                    hint: `Find two numbers that multiply to ${m*n} and add to ${m+n}.`,
+                    type: 'monic'
+                };
+            } else {
+                p = Math.floor(Math.random() * 3) + 2; 
+                q = Math.floor(Math.random() * 2) + 1; 
+                let r = Math.floor(Math.random() * 11) - 5;
+                let s = Math.floor(Math.random() * 11) - 5;
+                if (r === 0) r = 1; if (s === 0) s = -1;
+
+                const A = p * q;
+                const B = p * s + r * q;
+                const C = r * s;
+
+                currentProblem = {
+                    a: A, b: B, c: C,
+                    answer1: `(${p}x${r>=0?'+':''}${r})(${q}x${s>=0?'+':''}${s})`,
+                    answer2: `(${q}x${s>=0?'+':''}${s})(${p}x${r>=0?'+':''}${r})`,
+                    hint: `Multiply AC (${A} × ${C} = ${A*C}). Find factors of ${A*C} that sum to ${B}, then split the middle term.`,
+                    type: 'non-monic'
+                };
+            }
+
+            renderEquation();
+        }
+
+        function renderEquation() {
+            const {a, b, c} = currentProblem;
+            let termA = a === 1 ? 'x^2' : `${a}x^2`;
+            let termB = b > 0 ? `+ ${b}x` : (b < 0 ? `- ${Math.abs(b)}x` : '');
+            let termC = c > 0 ? `+ ${c}` : (c < 0 ? `- ${Math.abs(c)}` : '');
+            
+            const element = document.getElementById('equation-display');
+            // Using standard MathJax syntax for rendering
+            element.innerHTML = `\\[ ${termA} ${termB} ${termC} \\]`;
+            MathJax.typesetPromise([element]).catch(function (err) {
+                console.log(err.message);
+            });
+        }
+
+        function checkAnswer() {
+            if (isProblemSolved) return; // Prevent multiple score inputs
+
+            const input = document.getElementById('user-input').value.replace(/\s+/g, '');
+            const fb = document.getElementById('feedback');
+            
+            // Clean up old classes
+            fb.className = 'p-4 rounded-lg mb-6 font-medium text-center text-lg';
+
+            if (input === currentProblem.answer1.replace(/\s+/g, '') || 
+                input === currentProblem.answer2.replace(/\s+/g, '')) {
+                
+                // Correct Answer Logic
+                isProblemSolved = true;
+                streak++;
+                let pointsEarned = 10 + (streak > 1 ? (streak - 1) * 2 : 0); // Bonus points for streak
+                score += pointsEarned;
+                
+                updateScoreBoard();
+                
+                fb.innerText = `Excellent! Correct factorization. (+${pointsEarned} pts)`;
+                fb.classList.add('bg-green-100', 'text-green-800', 'border', 'border-green-300');
+                
+                // Disable input and submit button to encourage generating a new problem
+                document.getElementById('user-input').disabled = true;
+                document.getElementById('submit-btn').disabled = true;
+                document.getElementById('submit-btn').classList.add('opacity-50', 'cursor-not-allowed');
+
+            } else {
+                // Incorrect Answer Logic
+                streak = 0;
+                updateScoreBoard();
+                
+                fb.innerText = "Not quite. Check your signs or the Product-Sum values. Try again!";
+                fb.classList.add('bg-red-100', 'text-red-800', 'border', 'border-red-300');
+            }
+        }
+
+        function updateScoreBoard() {
+            document.getElementById('score-display').innerText = score;
+            document.getElementById('streak-display').innerText = streak;
+        }
+
+        function showHint() {
+            const box = document.getElementById('hint-box');
+            box.innerText = currentProblem.hint;
+            box.classList.remove('hidden');
+        }
+
+        // Allow pressing "Enter" in the input field to submit
+        document.getElementById("user-input").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                checkAnswer();
+            }
+        });
+
+        // Initialize first problem on load
+        window.onload = generateProblem;
+    </script>
+</body>
+</html>
