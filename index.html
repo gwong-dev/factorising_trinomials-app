@@ -20,7 +20,7 @@
 
     <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden school-theme">
         <div class="p-6 md:p-8">
-            <h1 class="text-3xl font-bold text-blue-900 mb-2">Trinomial Factorization Prep</h1>
+            <h1 class="text-3xl font-bold text-blue-900 mb-2">Mr. Wong's Trinomial Factorisation Prep Web App</h1>
             
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border-b border-gray-100 pb-4">
                 <div class="flex items-center gap-3">
@@ -134,12 +134,12 @@
                     type: 'monic'
                 };
 
-                // Fixed Markdown to HTML tags, and correctly escaped LaTeX
+                // Using direct HTML for styling and robust LaTeX delimiters
                 currentHints = [
                     `<strong>Step 1:</strong> We need to find two numbers that multiply to give the constant term, <strong>${c}</strong>.`,
                     `<strong>Step 2:</strong> Those same two numbers must add to give the middle coefficient, <strong>${b}</strong>.`,
                     `<strong>Step 3:</strong> The numbers that work are <strong>${m}</strong> and <strong>${n}</strong>.`,
-                    `<strong>Final Step:</strong> Write the expression in the form \\((${v} + \\text{first number})(${v} + \\text{second number})\\).`
+                    `<strong>Final Step:</strong> Write the expression in the form \\( (${v} + \\text{first number})(${v} + \\text{second number}) \\).`
                 ];
 
             } else {
@@ -162,11 +162,11 @@
                     type: 'non-monic'
                 };
 
-                // Fixed Markdown to HTML tags, and correctly escaped LaTeX block equation
+                // Using standard $$ delimiters which never fail in Javascript strings
                 currentHints = [
-                    `<strong>Step 1:</strong> Use the AC method. Multiply the leading coefficient and the constant: \\(a \\times c = ${A} \\times ${C} = <strong>${A*C}</strong>\\)`,
+                    `<strong>Step 1:</strong> Use the AC method. Multiply the leading coefficient and the constant: \\( a \\times c = ${A} \\times ${C} = ${A*C} \\)`,
                     `<strong>Step 2:</strong> Find two factors of <strong>${A*C}</strong> that add up to the middle coefficient, <strong>${B}</strong>.`,
-                    `<strong>Step 3:</strong> The factors are <strong>${f1}</strong> and <strong>${f2}</strong>. Use these to split the middle term: \\[ ${A}${v}^2 ${f1>0?'+':''}${f1}${v} ${f2>0?'+':''}${f2}${v} ${C>0?'+':''}${C} \\]`,
+                    `<strong>Step 3:</strong> The factors are <strong>${f1}</strong> and <strong>${f2}</strong>. Use these to split the middle term: <br><br> $$ ${A}${v}^2 ${f1>0?'+':''}${f1}${v} ${f2>0?'+':''}${f2}${v} ${C>0?'+':''}${C} $$`,
                     `<strong>Step 4:</strong> <strong>Group in pairs:</strong> Factorise the first two terms together, and the last two terms together.`,
                     `<strong>Step 5:</strong> Factor out the common binomial bracket to get your final answer.`
                 ];
@@ -192,7 +192,8 @@
             else if (c < 0) termC = `- ${Math.abs(c)}`;
             
             const element = document.getElementById('equation-display');
-            element.innerHTML = `\\[ ${termA} ${termB} ${termC} \\]`;
+            // Using $$ instead of \[ to ensure reliable rendering
+            element.innerHTML = `$$ ${termA} ${termB} ${termC} $$`;
             
             MathJax.typesetPromise([element]).catch((err) => console.log(err.message));
         }
