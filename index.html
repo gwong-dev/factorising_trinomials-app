@@ -119,11 +119,10 @@
             let a, m, n, p, q;
 
             if (isMonic) {
-                // (v + m)(v + n)
                 a = 1;
-                m = Math.floor(Math.random() * 25) - 12; // Wider range -12 to +12
+                m = Math.floor(Math.random() * 25) - 12;
                 n = Math.floor(Math.random() * 25) - 12;
-                if (m === 0) m = 4; if (n === 0) n = -5; // Prevent missing terms
+                if (m === 0) m = 4; if (n === 0) n = -5;
                 
                 const b = m + n;
                 const c = m * n;
@@ -135,17 +134,17 @@
                     type: 'monic'
                 };
 
+                // Fixed Markdown to HTML tags, and correctly escaped LaTeX
                 currentHints = [
-                    `**Step 1:** We need to find two numbers that multiply to give the constant term, **\\(${c}\\)**.`,
-                    `**Step 2:** Those same two numbers must add to give the middle coefficient, **\\(${b}\\)**.`,
-                    `**Step 3:** The numbers that work are **\\(${m}\\)** and **\\(${n}\\)**.`,
-                    `**Final Step:** Write the expression in the form \\((${v} + \\text{first number})(${v} + \\text{second number})\\).`
+                    `<strong>Step 1:</strong> We need to find two numbers that multiply to give the constant term, <strong>${c}</strong>.`,
+                    `<strong>Step 2:</strong> Those same two numbers must add to give the middle coefficient, <strong>${b}</strong>.`,
+                    `<strong>Step 3:</strong> The numbers that work are <strong>${m}</strong> and <strong>${n}</strong>.`,
+                    `<strong>Final Step:</strong> Write the expression in the form \\((${v} + \\text{first number})(${v} + \\text{second number})\\).`
                 ];
 
             } else {
-                // (pv + r)(qv + s) = (pq)v^2 + (ps + rq)v + rs
-                p = Math.floor(Math.random() * 4) + 2; // 2 to 5
-                q = Math.floor(Math.random() * 3) + 2; // 2 to 4
+                p = Math.floor(Math.random() * 4) + 2; 
+                q = Math.floor(Math.random() * 3) + 2; 
                 let r = Math.floor(Math.random() * 15) - 7;
                 let s = Math.floor(Math.random() * 15) - 7;
                 if (r === 0) r = 2; if (s === 0) s = -3;
@@ -163,25 +162,23 @@
                     type: 'non-monic'
                 };
 
+                // Fixed Markdown to HTML tags, and correctly escaped LaTeX block equation
                 currentHints = [
-                    `**Step 1:** Use the AC method. Multiply the leading coefficient and the constant: \\(a \\times c = ${A} \\times ${C} = \\mathbf{${A*C}}\\)`,
-                    `**Step 2:** Find two factors of **\\(${A*C}\\)** that add up to the middle coefficient, **\\(${B}\\)**.`,
-                    `**Step 3:** The factors are **\\(${f1}\\)** and **\\(${f2}\\)**. Use these to split the middle term: \\\\[ ${A}${v}^2 ${f1>0?'+':''}${f1}${v} ${f2>0?'+':''}${f2}${v} ${C>0?'+':''}${C} \\\\]`,
-                    `**Step 4:** **Group in pairs:** Factorise the first two terms together, and the last two terms together.`,
-                    `**Step 5:** Factor out the common binomial bracket to get your final answer.`
+                    `<strong>Step 1:</strong> Use the AC method. Multiply the leading coefficient and the constant: \\(a \\times c = ${A} \\times ${C} = <strong>${A*C}</strong>\\)`,
+                    `<strong>Step 2:</strong> Find two factors of <strong>${A*C}</strong> that add up to the middle coefficient, <strong>${B}</strong>.`,
+                    `<strong>Step 3:</strong> The factors are <strong>${f1}</strong> and <strong>${f2}</strong>. Use these to split the middle term: \\[ ${A}${v}^2 ${f1>0?'+':''}${f1}${v} ${f2>0?'+':''}${f2}${v} ${C>0?'+':''}${C} \\]`,
+                    `<strong>Step 4:</strong> <strong>Group in pairs:</strong> Factorise the first two terms together, and the last two terms together.`,
+                    `<strong>Step 5:</strong> Factor out the common binomial bracket to get your final answer.`
                 ];
             }
 
-            // Update placeholder text dynamically to match the current variable
             document.getElementById('user-input').placeholder = `e.g., (${v}+2)(${v}-3)`;
-
             renderEquation();
         }
 
         function renderEquation() {
             const {a, b, c, v} = currentProblem;
             
-            // Formatting logic to avoid "1x" or "+ -5"
             let termA = a === 1 ? `${v}^2` : (a === -1 ? `-${v}^2` : `${a}${v}^2`);
             
             let termB = '';
@@ -189,12 +186,10 @@
             else if (b === 1) termB = `+ ${v}`;
             else if (b === -1) termB = `- ${v}`;
             else if (b < -1) termB = `- ${Math.abs(b)}${v}`;
-            // If b === 0, it leaves termB blank
 
             let termC = '';
             if (c > 0) termC = `+ ${c}`;
             else if (c < 0) termC = `- ${Math.abs(c)}`;
-            // If c === 0, leaves termC blank
             
             const element = document.getElementById('equation-display');
             element.innerHTML = `\\[ ${termA} ${termB} ${termC} \\]`;
@@ -206,7 +201,6 @@
             if (isProblemSolved) return; 
 
             const rawInput = document.getElementById('user-input').value;
-            // Remove spaces, fix brackets formatting just in case
             const input = rawInput.replace(/\s+/g, '');
             const fb = document.getElementById('feedback');
             
@@ -214,10 +208,9 @@
             const ans2 = currentProblem.answer2.replace(/\s+/g, '');
 
             if (input === ans1 || input === ans2) {
-                // Correct Answer
                 isProblemSolved = true;
                 streak++;
-                score++; // Increment by exactly 1 as requested
+                score++; 
                 
                 updateScoreBoard();
                 
@@ -225,7 +218,6 @@
                 fb.classList.remove('hidden');
                 fb.classList.add('bg-green-100', 'text-green-800', 'border', 'border-green-300');
                 
-                // Lock inputs
                 document.getElementById('user-input').disabled = true;
                 document.getElementById('submit-btn').disabled = true;
                 document.getElementById('submit-btn').classList.add('opacity-50', 'cursor-not-allowed');
@@ -233,7 +225,6 @@
                 document.getElementById('hint-btn').classList.add('opacity-50');
 
             } else {
-                // Incorrect Answer
                 streak = 0;
                 updateScoreBoard();
                 
@@ -253,19 +244,16 @@
                 const hintBox = document.getElementById('hint-box');
                 hintBox.classList.remove('hidden');
                 
-                // Create a new div for the hint
                 const newHint = document.createElement('div');
                 newHint.className = 'p-3 bg-amber-50 border-l-4 border-amber-400 text-gray-800 rounded-r-md shadow-sm';
                 newHint.innerHTML = currentHints[hintIndex];
                 
                 hintBox.appendChild(newHint);
                 
-                // Tell MathJax to render the math in the new hint
                 MathJax.typesetPromise([newHint]).catch((err) => console.log(err.message));
                 
                 hintIndex++;
                 
-                // If out of hints, disable the button
                 if (hintIndex >= currentHints.length) {
                     const btn = document.getElementById('hint-btn');
                     btn.innerText = "All Hints Shown";
@@ -275,7 +263,6 @@
             }
         }
 
-        // Allow pressing "Enter" in the input field to submit
         document.getElementById("user-input").addEventListener("keypress", function(event) {
             if (event.key === "Enter") {
                 event.preventDefault();
@@ -283,7 +270,6 @@
             }
         });
 
-        // Initialize first problem on load
         window.onload = generateProblem;
     </script>
 </body>
